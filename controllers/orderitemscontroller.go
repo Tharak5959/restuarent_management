@@ -1,24 +1,34 @@
 package controller
-import(
-	"github.com/gin-gonic/gin"	
+
+import (
+	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
-func Getorderitems() gin.HandlerFunc {
+func GetOrderItems() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Handler logic here
 	}
 }
-func Getorderitem() gin.HandlerFunc {
+func GetOrderItem() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Handler logic here
 	}
 }
-func Createorderitem() gin.HandlerFunc {
+func GetOrderItemByOrder() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// Handler logic here
+	}
+}
+//  func ItemsByOrder(id string)(OrderItems []primitive.M, err error) {
+//  }
+
+func CreateOrderItem() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Handler logic here
 	}
 }
 
-func Updateorderitem() gin.HandlerFunc {
+func UpdateOrderItem() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Handler logic here
 	}

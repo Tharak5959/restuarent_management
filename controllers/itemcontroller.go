@@ -2,23 +2,23 @@ package controller
 import(
 	"github.com/gin-gonic/gin"	
 )
-func GetOrders() gin.HandlerFunc {
+func GetItems() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Handler logic here
 	}
 }
-func GetOrder() gin.HandlerFunc {
+func GetItem() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Handler logic here
 	}
 }
-func CreateOrder() gin.HandlerFunc {
+func CreateItem() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Handler logic here
 	}
 }
 
-func UpdateOrder() gin.HandlerFunc {
+func UpdateItem() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Handler logic here
 	}
