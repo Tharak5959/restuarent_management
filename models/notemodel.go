@@ -4,7 +4,7 @@ import(
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 type note struct{
-	Id	Primitive.ObjectId `bson:"_id"`
+	Id	primitive.ObjectID `bson:"_id"`
 	Text string `json:"text"`
 	Title string `json:"title"`
 	CreatedAt time.Time `json:"CreatedAt"`

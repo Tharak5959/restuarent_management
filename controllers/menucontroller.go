@@ -12,7 +12,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
+
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func init() {
@@ -100,7 +101,7 @@ func UpdateMenu() gin.HandlerFunc {
 			return
 		}
 
-			if !inTimeSpan(*menu.Start_date, *menu.End_date, time.Now()) {
+			if !inTimeSpan(menu.Start_date, menu.End_date, time.Now()) {
 				msg := fmt.Sprintf("kindly retype the time")
 				c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
 				return
@@ -110,6 +111,7 @@ func UpdateMenu() gin.HandlerFunc {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
 				return
 			}
+			var updatedObj bson.D
 			updatedObj = append(updatedObj, bson.E{Key: "starting_date", Value: menu.Start_date})
 			updatedObj = append(updatedObj, bson.E{Key: "ending_date", Value: menu.End_date})
 			if menu.Menu_Name != "" {
@@ -118,30 +120,30 @@ func UpdateMenu() gin.HandlerFunc {
 			if menu.Category != "" {
 				updatedObj = append(updatedObj, bson.E{Key: "category", Value: menu.Category})
 			}
-			if menu.Updated_At != (time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))) {
-				updatedObj = append(updatedObj, bson.E{Key: "updated_at", Value: menu.Updated_At})
-				upsert:=true
-				opt :=options.UpdateOptions{
-					Upsert: &upsert,
-				}
-				menu.Collection.UpdateOne(
-					ctx,
-					filter,
-					bson.D{
-						{"$set",updateobj}
-					},
-					&opt,
-				)
-				if err != nil {
-					msg:="menu update failed"
-					c.JSON(http.StatusInternalServerError,gin.H{"error":msg})
-				}
-				defer cancel()
-				c.JSON(http.StatusOK,result)
-			}
-		}
+			menu.Updated_At, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
+			updatedObj = append(updatedObj, bson.E{Key: "updated_at", Value: menu.Updated_At})
 
-		// Add logic to update the menu in the database here
-		// c.JSON(http.StatusOK, gin.H{"message": "menu updated successfully"})
+			upsert := true
+			opt := options.UpdateOptions{
+				Upsert: &upsert,
+			}
+			filter := bson.M{"menu_id": menu.Menu_ID}
+			updateObj := bson.D{
+				{Key: "$set", Value: updatedObj},
+			}
+
+			result, err := database.MenuCollection.UpdateOne(
+				ctx,
+				filter,
+				updateObj,
+				&opt,
+			)
+			if err != nil {
+				msg := "menu update failed"
+				c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
+				return
+			}
+			c.JSON(http.StatusOK, result)
+		}
 	}
-}
+
