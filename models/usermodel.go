@@ -10,6 +10,8 @@ type User struct {
 	LastName string `bson:"last_name,omitempty"`
 	Avatar string `bson:"avatar,omitempty"`
 	Phone string `bson:"phone,omitempty"`
+	Email string `bson:"email,omitempty"`
+	Password string `bson:"password,omitempty"`
 	Token string `bson:"token,omitempty"`
 	Refresh_token string `bson:Refresh_token`
 	Role string `bson:"role,omitempty"`

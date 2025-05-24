@@ -16,9 +16,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func init() {
-	database.MenuCollection = database.OpenCollection(database.Client, "menu")
-}
+var MenuCollection = database.OpenCollection(database.Client, "menu")
 
 // inTimeSpan checks if the current time is within the start and end time range.
 func inTimeSpan(start, end, check time.Time) bool {
@@ -30,9 +28,8 @@ func GetMenus() gin.HandlerFunc {
 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
 		defer cancel()
 
-		result, err := database.MenuCollection.Find(context.TODO(), bson.M{})
+		result, err := MenuCollection.Find(context.TODO(), bson.M{})
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "error while fetching menu"})
 			return
 		}
 
@@ -50,11 +47,12 @@ func GetMenu() gin.HandlerFunc {
 			menu_id := c.Param("menu_id")
 			var menu bson.M
 			defer cancel()
-			err := database.MenuCollection.FindOne(ctx, bson.M{"menu_id": menu_id}).Decode(&menu)
-			if err != nil {
-				c.JSON(http.StatusInternalServerError, gin.H{"error": "error while fetching food"})
+		err := MenuCollection.FindOne(ctx, bson.M{"menu_id": menu_id}).Decode(&menu)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Menu not found"})
+			return
 		}
-			c.JSON(http.StatusOK, menu)
+		c.JSON(http.StatusOK, menu)
 	}
 }
 
@@ -77,7 +75,7 @@ func CreateMenu() gin.HandlerFunc {
 		menu.Updated_At, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 		menu.Id = primitive.NewObjectID()
 		menu.Menu_ID = menu.Id.Hex()
-		result, insertErr := menuCollection.InsertOne(ctx, menu)
+		result, insertErr := MenuCollection.InsertOne(ctx, menu)
 		if insertErr != nil {
 			msg := fmt.Sprintf("menu was not created")
 			c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
@@ -132,7 +130,7 @@ func UpdateMenu() gin.HandlerFunc {
 				{Key: "$set", Value: updatedObj},
 			}
 
-			result, err := database.MenuCollection.UpdateOne(
+			result, err := MenuCollection.UpdateOne(
 				ctx,
 				filter,
 				updateObj,
