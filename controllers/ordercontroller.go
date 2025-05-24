@@ -20,7 +20,9 @@ var tableCollection *mongo.Collection = database.OpenCollection(database.Client,
 func GetOrders() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var ctx,cancel =context.WithTimeout(context.Background(), 10*time.Second)
+
 		result, err := orderCollection.Find(context.TODO(), bson.M{})
+		defer cancel()
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Error fetching orders"})
 			return
@@ -36,7 +38,7 @@ func GetOrders() gin.HandlerFunc {
 }
 func GetOrder() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var ctx, cancel = context.WithTimeout(context.Background(), 10*time.Second)
+		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
 		Order_ID := c.Param("order_id")
 		var order models.Order
 		defer cancel()
@@ -75,7 +77,7 @@ func CreateOrder() gin.HandlerFunc {
 			order.Order_ID = order.Id.Hex()
 			result,inseterr := orderCollection.InsertOne(ctx, order)
 			if inseterr != nil {
-				msg := fmt.Sprintf("order was not created")
+				msg := "order was not created"
 				c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
 				return
 			}

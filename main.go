@@ -2,10 +2,10 @@ package main
 
 import (
 	"context"
-	"golang-restuarent_management/database"
-	"golang-restuarent_management/middleware"
+
+	middleware "golang-restuarent_management/middleware"
 	// "golang-restuarent_management/mongo"
-	"golang-restuarent_management/routes"
+	routes "golang-restuarent_management/routes"
 	"log"
 	"os"
 	"time"
@@ -14,7 +14,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
-var foodcollection *mongo.Collection = database.OpenCollection(Client, "food")
  func main(){
 	port  := os.Getenv("PORT")
 	if port ==""{	
@@ -26,11 +25,11 @@ var foodcollection *mongo.Collection = database.OpenCollection(Client, "food")
 	router.Use(middleware.Autentication())
 	routes.FoodRoutes(router)
 	routes.MenuRoutes(router)
-	router.tableRoutes(router)
-	router.itemRoutes(router)
-	router.orderRoutes(router)
-	router.orderitemRoutes(router)
-	router.invoiceRoutes(router)
+	routes.TableRoutes(router)
+	// router.itemRoutes(router)
+	routes.OrderRoutes(router)
+	routes.OrderItemRoutes(router)
+	routes.InvoiceRoutes(router)
 
 	router.Run(":"+port)
  }

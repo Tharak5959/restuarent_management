@@ -32,3 +32,18 @@ func OpenCollection(client *mongo.Client, collectionName string) *mongo.Collecti
 	var collection *mongo.Collection = client.Database("restaurent").Collection(collectionName)
 	return collection
 }
+
+var Client *mongo.Client
+
+func init() {
+    // Initialize MongoDB client
+    ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+    defer cancel()
+
+    client, err := mongo.Connect(ctx, options.Client().ApplyURI("your-mongodb-uri"))
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    Client = client
+}

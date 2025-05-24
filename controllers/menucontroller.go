@@ -49,9 +49,8 @@ func GetMenu() gin.HandlerFunc {
 			var ctx, cancel = context.WithTimeout(context.Background(), 10*time.Second)
 			menu_id := c.Param("menu_id")
 			var menu bson.M
-			err := database.MenuCollection.FindOne(ctx, bson.M{"menu_id": menu_id}).Decode(&menu)
 			defer cancel()
-			err = database.MenuCollection.FindOne(ctx, bson.M{"menu_id": menu_id}).Decode(&menu)
+			err := database.MenuCollection.FindOne(ctx, bson.M{"menu_id": menu_id}).Decode(&menu)
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "error while fetching food"})
 		}
@@ -63,6 +62,7 @@ func CreateMenu() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var ctx, cancel = context.WithTimeout(context.Background(), 10*time.Second)
 		var menu models.Menu
+		defer cancel()
 		if err := c.BindJSON(&menu); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "error while binding food"})
 			return
@@ -102,12 +102,12 @@ func UpdateMenu() gin.HandlerFunc {
 		}
 
 			if !inTimeSpan(menu.Start_date, menu.End_date, time.Now()) {
-				msg := fmt.Sprintf("kindly retype the time")
+				msg := "kindly retype the time"
 				c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
 				return
 			}
 			if !inTimeSpan(menu.Start_date, menu.End_date, time.Now()) {
-				msg := fmt.Sprintf("kindly retype the time")
+				msg := "kindly retype the time"
 				c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
 				return
 			}

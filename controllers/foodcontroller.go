@@ -2,7 +2,6 @@ package controller
 
 import (
 	"context"
-	"fmt"
 	"golang-restuarent_management/database"
 	"golang-restuarent_management/models"
 	"log"
@@ -86,6 +85,7 @@ func CreateFood() gin.HandlerFunc{
 		var ctx, cancel = context.WithTimeout(context.Background(), 10*time.Second)
 		var food models.Food
 		var menu models.Menu
+		defer cancel()
 		if err := c.BindJSON(&food); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "error while binding food"})
 			return
@@ -100,7 +100,7 @@ func CreateFood() gin.HandlerFunc{
 		err := menuCollection.FindOne(ctx, bson.M{"menu_id": food.Menu_ID}).Decode(&menu)
 		defer cancel()
 		if err != nil {
-			msg := fmt.Sprintf("menu was not found")
+			msg := "menu was not found"
 			c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
 			return
 		}
@@ -113,7 +113,7 @@ func CreateFood() gin.HandlerFunc{
 
 		result, insertErr := foodCollection.InsertOne(ctx, food)
 		if insertErr != nil {
-			msg := fmt.Sprintf("food was not created")
+			msg := "food was not created"
 			c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
 			return
 		}
@@ -178,7 +178,7 @@ func UpdateFood() gin.HandlerFunc {
 			&opt,
 		)
 		if err != nil {
-			msg := fmt.Sprintf("food was not updated")
+			msg := "food was not updated"
 			c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
 			return
 		}

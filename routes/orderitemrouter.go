@@ -3,7 +3,7 @@ import(
 	"github.com/gin-gonic/gin"
 	controller "golang-restuarent_management/controllers"
 )
-func orderitemRoutes(incomingRoutes *gin.Engine){
+func OrderItemRoutes(incomingRoutes *gin.Engine){
 	incomingRoutes.GET("/orderitem", controller.GetOrderItems())
 	incomingRoutes.GET("/orderitem/:orderitem_id", controller.GetOrderItem())
 	incomingRoutes.GET("/orderitem-order/:orderitem_id", controller.GetOrderItemByOrder())
